@@ -22,7 +22,6 @@ lines = filein.readlines()
 lines = [line[:-1] for line in lines]
 filein.close()
 
-lines = []
 def tester(url):
     '''
     Parameters
