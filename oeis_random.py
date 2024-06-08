@@ -8,10 +8,6 @@ Notes
 
 - This program should be run in the same directory as a text file 'used.txt',
 which will store sequences already seen.
-- The upper bound of 400000 will need to be updated in the future; there are 
-currently 373162 sequences in the OEIS (as of 7/6/24). However, setting the upper 
-bound too high will hurt efficiency, since it will take more tries for the program to
-find an existing page.
 - On Windows, this program can be paired with the Windows Task Scheduler to
 automatically open the page for a (pseudo)random sequence at a specified time
 each day (or at any regular interval).
@@ -26,6 +22,7 @@ lines = filein.readlines()
 lines = [line[:-1] for line in lines]
 filein.close()
 
+lines = []
 def tester(url):
     '''
     Parameters
@@ -56,7 +53,15 @@ def tester(url):
         return False
 
 def gen_url():
-    n = randint(1, 400000)
+    # find upper bound
+    page = urlopen("https://oeis.org/")
+    html_bytes = page.read()
+    html = html_bytes.decode("utf-8")
+    ind1 = html.index("Contains") + 9
+    ind2 = html.index("sequences.")
+    upper_bound = int(html[ind1:ind2-1]) + 1000
+
+    n = randint(1, upper_bound)
     l = len(str(n))
     s = "A" + "0"*(6 - l) + str(n)
     url = "https://oeis.org/" + s
